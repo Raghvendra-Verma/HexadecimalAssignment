@@ -1,0 +1,47 @@
+body, h1, table, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 0px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Style the table header*/
+
+table{
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+}
+
+td {
+    font-weight: bold;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #261763;
+    color: white;
+}
+
+/* Style alternate rows for better readability*/
+
+tbody tr:nth-child(odd) {
+    background-color: #e6e0e0;
+}
