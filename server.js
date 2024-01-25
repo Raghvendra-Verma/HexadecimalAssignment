@@ -1,65 +1,33 @@
 const express = require('express');
+const mongoose = require("mongoose");
+const authRoutes = require('./routes/authRoutes');
+const apiRoutes = require('./routes/apiRoutes');
+const todosRoutes = require('./routes/todosRoutes')
+const bodyParser = require('body-parser');
 const axios = require('axios');
 
 const app = express();
-
 const port = 3001;
 
 const cors = require("cors");
-
 app.use(cors());
 
 app.use(express.json());
+app.use(bodyParser.json());
 
+// Connect to MongoDB
+mongoose.connect('mongodb://127.0.0.1:27017/Todos')
+.then(()=>{
+    console.log("DataBase Connected");
+}).catch((error)=>{
+    console.log("Database connection failed!");
+})
 
-app.get('/getDataFromAPI', async(req,res)=>{
-    try {
-        const response = await axios.get("https://jsonplaceholder.typicode.com/users");
+//Api routes
+app.use('/api/auth',authRoutes);
+app.use('/api', apiRoutes);
+app.use('/api',todosRoutes);
 
-        const apiData = response.data;
-
-        res.json(apiData);
-    } catch (error) {
-        console.error('Unable to fetch data from api:', error);
-        res.status(500).json({error: 'Internal Server Error'});
-    }
-});
-
-app.get('/getTodos/:id', async(req,res)=>{
-    try {
-        const todoApiResponse = await axios.get("https://jsonplaceholder.typicode.com/todos");
-
-        const todos = todoApiResponse.data;
-
-        const todoId = parseInt(req.params.id);
-  const todo = todos.find(item => item.id === todoId);
-
-  if (!todo) {
-    return res.status(404).json({ error: 'Todo not found' });
-  }
-
-  res.json(todo);
-
-    } catch (error) {
-        console.error('Error fetching to-do list:', error);
-        res.status(500).json({error: 'Internal Server Error'});
-    }
-});
-
-// Filtering route based on a query parameter
-app.get('/getTodos', async(req, res) => {
-    const todoApiResponse = await axios.get("https://jsonplaceholder.typicode.com/todos");
-
-    const todos = todoApiResponse.data;
-    const { completed } = req.query;
-  
-    if (completed === 'true' || completed === 'false') {
-      const filteredTodos = todos.filter(todo => todo.completed === (completed === 'true'));
-      return res.json(filteredTodos);
-    }
-  
-    res.json(todos);
-  });
 
 app.listen(port, () =>{
     console.log(`Server is running on port ${port}`);
